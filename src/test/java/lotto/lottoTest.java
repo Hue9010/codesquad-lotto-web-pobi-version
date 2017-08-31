@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import lotto.model.InvalidLottoException;
 import lotto.model.LottoGenerator;
 import lotto.model.Lottos;
 import lotto.model.UserLotto;
-
 public class lottoTest {
 
 	@Test
@@ -36,5 +36,13 @@ public class lottoTest {
 		String string = "";
 		String[] st = string.split("\n");
 		System.out.println(st.length);
+	}
+	
+	@Test(expected = InvalidLottoException.class)
+	public void 로또_번호를_짧거나_길게_한_경우() throws Exception {
+//		generateByMoney
+		int inputMoney = 5000;
+		String manualNumber = "1,2,3,4,5";
+		LottoGenerator.generateByMoney(inputMoney, manualNumber);
 	}
 }

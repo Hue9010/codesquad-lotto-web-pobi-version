@@ -22,13 +22,26 @@ public class WinningLotto {
     
     public WinningLotto(String lottoNo, String bonusNumber) {
         String[] values = lottoNo.split(",");
+        if(values.length != 6) {
+			throw new InvalidLottoException("6개의 숫자를 입력 해 주세요.");
+		}
         List<Integer> lotto = new ArrayList<>();
         for (String value : values) {
+			int num = Integer.parseInt(value.trim());
+			if(num > 45 | num < 0) {
+				throw new InvalidLottoException("1~45의 숫자를 입력 해 주세요.");
+			}
+			if( lotto.contains(num)) {
+				throw new InvalidLottoException("중복 된 숫자가 있습니다.");
+			}
             lotto.add(Integer.parseInt(value.trim()));
         }
         Collections.sort(lotto);
         this.lotto = lotto;
         this.bonusNumber = Integer.parseInt(bonusNumber);
+        if(lotto.contains(this.bonusNumber) || this.bonusNumber > 45 | this.bonusNumber < 1) {
+    		throw new InvalidLottoException("보너스 번호를 잘못 입력 하셨습니다.");
+    }
     }
     
     public Match countOfMatch(List<Integer> lotto) {

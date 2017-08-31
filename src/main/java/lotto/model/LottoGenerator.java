@@ -10,7 +10,11 @@ import java.util.stream.IntStream;
 public class LottoGenerator {
 	public static final String NEWLINE = System.getProperty("line.separator");
 
-	public static Lottos generateByMoney(int money, String input) throws InvalidLottoException {
+	public static Lottos generateByMoney(int money, String input){
+		if(!(money >= 1000)) {
+			throw new InvalidLottoException("천원 이상 및 정상 적인 금액을 입력 하세요.");
+		}
+		
 		int buyingNo = money / UserLotto.MONEY_PER_TICKET;
 		ArrayList<UserLotto> lottos = new ArrayList<>();
 
@@ -30,22 +34,31 @@ public class LottoGenerator {
 		return new UserLotto(seed.subList(0, 6));
 	}
 
-	public static ArrayList<UserLotto> generateManual(String userInput) throws InvalidLottoException {
+	public static ArrayList<UserLotto> generateManual(String userInput) throws InvalidLottoException, NumberFormatException {
 		ArrayList<UserLotto> lottos = new ArrayList<>();
 
 		String[] inputArr = userInput.split(NEWLINE);
 		for (String input : inputArr) {
 			lottos.add(manualLotto(input));
 		}
-		// return new Lottos(lottos);
 		return lottos;
 	}
 
-	private static UserLotto manualLotto(String input) {
+	private static UserLotto manualLotto(String input) throws NumberFormatException{
 		List<Integer> userLotto = new ArrayList<>();
 		String[] numbers = input.split(",");
+		if(numbers.length != 6) {
+			throw new InvalidLottoException("6개의 숫자를 입력 해 주세요.");
+		}
 		for (String number : numbers) {
-			userLotto.add(Integer.parseInt(number.trim()));
+			int num = Integer.parseInt(number.trim());
+			if(num > 45 | num < 0) {
+				throw new InvalidLottoException("1~45의 숫자를 입력 해 주세요.");
+			}
+			if( userLotto.contains(num)) {
+				throw new InvalidLottoException("중복 된 숫자가 있습니다.");
+			}
+			userLotto.add(num);
 		}
 		return new UserLotto(userLotto);
 	}

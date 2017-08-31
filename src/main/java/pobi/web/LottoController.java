@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import lotto.model.InvalidLottoException;
 import lotto.model.LottoGenerator;
 import lotto.model.Lottos;
 import lotto.model.Result;
@@ -27,12 +28,17 @@ public class LottoController {
 		System.out.println(manualNumber);
 		System.out.println(manualNumber.split(NEWLINE).length);
 		
-//		if (manualNumber.length() > 1) {
-//			lottos = LottoGenerator.generateManual(manualNumber);
-//		} else {
-//			lottos = LottoGenerator.generateByMoney(inputMoney);
-//		}
-		lottos = LottoGenerator.generateByMoney(inputMoney, manualNumber);
+		try {
+			lottos = LottoGenerator.generateByMoney(inputMoney, manualNumber);
+		} catch(InvalidLottoException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return "index";
+		} catch(NumberFormatException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return "index";
+		}
 		model.addAttribute("lottos", lottos.getLottos());
 		model.addAttribute("size", lottos.count());
 		return "show";
@@ -40,7 +46,19 @@ public class LottoController {
 
 	@PostMapping("/matchLotto")
 	public String show(String winningNumber, String bonusNumber, Model model) {
-		WinningLotto winningLotto = new WinningLotto(winningNumber, bonusNumber);
+		WinningLotto winningLotto = null;
+		try {
+			winningLotto = new WinningLotto(winningNumber, bonusNumber);
+		} catch(InvalidLottoException e){
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return "index";
+		} catch(NumberFormatException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return "index";
+		}
+//		WinningLotto winningLotto = new WinningLotto(winningNumber, bonusNumber);
 		Result result = lottos.match(winningLotto);
 		ResultDto resultDto = ResultDto.fromResult(result);
 		model.addAttribute("result", resultDto);
