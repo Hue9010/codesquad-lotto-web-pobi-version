@@ -33,10 +33,12 @@ public class LottoController {
 		} catch(InvalidLottoException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
+			model.addAttribute("err", e.getMessage());
 			return "index";
 		} catch(NumberFormatException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
+			model.addAttribute("err", e.getMessage());
 			return "index";
 		}
 		model.addAttribute("lottos", lottos.getLottos());
@@ -52,13 +54,18 @@ public class LottoController {
 		} catch(InvalidLottoException e){
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-			return "index";
+			model.addAttribute("lottos", lottos.getLottos());
+			model.addAttribute("size", lottos.count());
+			model.addAttribute("err", e.getMessage());
+			return "show";
 		} catch(NumberFormatException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-			return "index";
+			model.addAttribute("lottos", lottos.getLottos());
+			model.addAttribute("size", lottos.count());
+			model.addAttribute("err", e.getMessage());
+			return "show";
 		}
-//		WinningLotto winningLotto = new WinningLotto(winningNumber, bonusNumber);
 		Result result = lottos.match(winningLotto);
 		ResultDto resultDto = ResultDto.fromResult(result);
 		model.addAttribute("result", resultDto);
